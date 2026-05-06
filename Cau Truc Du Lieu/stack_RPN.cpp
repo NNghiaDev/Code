@@ -41,7 +41,7 @@ void pop(stack &s){
     delete p;
 }
 elt top(stack s){
-    if(empty(s)) return '-1';
+    if(empty(s)) return ' ';
     return s->data;
 }
 int uutien(char s){
@@ -56,7 +56,6 @@ int not_number(char s){
 void hauto(char a[], char b[]){
     int n=strlen(a);
     stack s;
-    elt x;
     init(s);
     int k=0;
     for(int i=0; i<n; i++){
@@ -92,10 +91,65 @@ void hauto(char a[], char b[]){
     }
     b[k]='\0';
 }
+typedef float eltf;
+struct nodef{
+    eltf data;
+    nodef *next;
+};
+typedef nodef* stackf;
+
+void init(stackf &s){
+    s=NULL;
+}
+
+bool empty(stackf s){
+    return s==NULL;
+}
+
+void push(stackf &s, eltf x){
+    nodef *p=new nodef;
+    p->data=x;
+    p->next=s;
+    s=p;
+}
+void pop(stackf &s){
+    if(empty(s)) return;
+    nodef *p=s;
+    s=s->next;
+    delete p;
+}
+eltf top(stackf s){
+    if(empty(s)) return 0;
+    return s->data;
+}
+float cal(float a, float b, char op){
+    switch(op){
+        case '+': return b+a;
+        case '-': return b-a;
+        case '*': return b*a;
+        case '/': return b/a;
+    }
+}
+float solve(char b[],int n){
+    stackf s;
+    init(s);
+    for(int i=0; i<n; i++){
+        if(!not_number(b[i])) push(s,b[i]-'0');
+        else{
+            float a=top(s);
+            pop(s);
+            float b1=top(s);
+            pop(s);
+            push(s,cal(a,b1,b[i]));
+        }
+    }
+    return top(s);
+}
 int main(){
-    char a[30]="(2+3)*(4-5)",b[30];
+    char a[30]="(2*5+3*4-7)*2",b[30];
     hauto(a,b);
     int n=strlen(b);
     for(int i=0; i<n; i++) cout<<b[i];
-
+    cout<<endl;
+    cout<<solve(b,n);
 }
